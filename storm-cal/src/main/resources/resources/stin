@@ -1,0 +1,12 @@
+{
+    "conf": {
+        "topology.message.timeout.secs": 3
+    },
+    "pidDir": "tmp",
+    "context": {
+        "taskid": 3
+    }
+}
+end
+{"command": "next"}
+end

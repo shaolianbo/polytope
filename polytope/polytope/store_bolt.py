@@ -27,6 +27,10 @@ def test_store_bolt():
     store_bolt.process(t)
 
 
+def run():
+    StoreBolt().run()
+
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1:

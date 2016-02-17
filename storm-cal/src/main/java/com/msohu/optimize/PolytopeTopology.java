@@ -34,7 +34,7 @@ public class PolytopeTopology {
   public static class MonitorDataSpout extends ShellSpout implements IRichSpout {
 
     public MonitorDataSpout() {
-      super("python", "monitor_data_spout.py");
+      super("polytope-spout");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class PolytopeTopology {
   public static class AddUpBolt extends ShellBolt implements IRichBolt {
 
     public AddUpBolt() {
-      super("python", "addup_bolt.py");
+      super("polytope-addup");
     }
 
     @Override
@@ -67,7 +67,7 @@ public class PolytopeTopology {
   public static class StoreBolt extends ShellBolt implements IRichBolt {
 
     public StoreBolt() {
-      super("python", "store_bolt.py");
+      super("polytope-store")
     }
 
     @Override

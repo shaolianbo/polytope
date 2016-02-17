@@ -50,7 +50,7 @@ class KafkaSpout(BaseDataSpout):
         if msg:
             msg_str = msg
             try:
-                -, index, data = cls.format(json.loads(msg))
+                _, index, data = cls.format(json.loads(msg))
             except Exception as e:
                 logger.error(r"%s %r", msg_str, e)
             cls.consumer.commit_offsets()

@@ -1,0 +1,4 @@
+ipip==0.0.1
+kazoo
+samsa
+setuptools

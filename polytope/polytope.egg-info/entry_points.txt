@@ -1,5 +1,0 @@
-[console_scripts]
-polytope-addup = polytope.addup_bolt:run
-polytope-spout = polytope.monitor_data_spout:run
-polytope-store = polytope.store_bolt:run
-

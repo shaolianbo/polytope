@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-# author: frk
-
+import logging
 import struct
 from socket import inet_aton
 import os
@@ -9,6 +8,8 @@ import os
 _unpack_V = lambda b: struct.unpack("<L", b)
 _unpack_N = lambda b: struct.unpack(">L", b)
 _unpack_C = lambda b: struct.unpack("B", b)
+
+logger = logging.getLogger(__name__)
 
 
 class IPX:
@@ -25,8 +26,7 @@ class IPX:
                 cls.offset, = _unpack_N(cls.binary[:4])
                 cls.index = cls.binary[4:cls.offset]
         except Exception as ex:
-            print "cannot open file %s" % file
-            print ex.message
+            logger.exception("cannot open ipip file mydata4vipday2.datx")
             exit(0)
 
     @classmethod

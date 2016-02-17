@@ -34,7 +34,7 @@ public class PolytopeTopology {
   public static class MonitorDataSpout extends ShellSpout implements IRichSpout {
 
     public MonitorDataSpout() {
-      super("polytope-spout");
+      super("python", "spout.py");
     }
 
     @Override
@@ -51,11 +51,12 @@ public class PolytopeTopology {
   public static class AddUpBolt extends ShellBolt implements IRichBolt {
 
     public AddUpBolt() {
-      super("polytope-addup");
+      super("python", "addup_bolt.py");
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
+      declarer.declare(new Fields("partResult"));
     }
 
     @Override
@@ -67,7 +68,7 @@ public class PolytopeTopology {
   public static class StoreBolt extends ShellBolt implements IRichBolt {
 
     public StoreBolt() {
-      super("polytope-store")
+      super("python", "store_bolt.py");
     }
 
     @Override
@@ -87,20 +88,19 @@ public class PolytopeTopology {
 
     builder.setSpout("spout", new MonitorDataSpout(), 2);
 
-    builder.setBolt("addup", new AddUpBolt(), 4).fieldsGrouping("spout", new Fields("index"));
+    builder.setBolt("addup", new AddUpBolt(), 8).fieldsGrouping("spout", new Fields("index"));
     builder.setBolt("store", new StoreBolt(), 1).shuffleGrouping("addup");
 
     Config conf = new Config();
-    conf.setDebug(true);
 
 
     if (args != null && args.length > 0) {
-      conf.setNumWorkers(3);
-
+      conf.setNumWorkers(8);
       StormSubmitter.submitTopologyWithProgressBar(args[0], conf, builder.createTopology());
     }
     else {
-      conf.setMaxTaskParallelism(3);
+      conf.setDebug(true);
+      conf.setMaxTaskParallelism(4);
       LocalCluster cluster = new LocalCluster();
       cluster.submitTopology("polytope", conf, builder.createTopology());
 

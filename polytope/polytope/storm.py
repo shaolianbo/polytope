@@ -15,7 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import logging
 import sys
 import os
 import traceback
@@ -26,8 +26,13 @@ try:
 except ImportError:
     import json
 
+import settings
+
 json_encode = lambda x: json.dumps(x)
 json_decode = lambda x: json.loads(x)
+
+logger = logging.getLogger(__name__)
+
 
 #reads lines and reconstructs newlines appropriately
 def readMsg():
@@ -39,6 +44,7 @@ def readMsg():
         if line[0:-1] == "end":
             break
         msg = msg + line
+    logger.debug("readMsg %s", msg)
     return json_decode(msg[0:-1])
 
 MODE = None
@@ -75,9 +81,11 @@ def readTuple():
     return Tuple(cmd["id"], cmd["comp"], cmd["stream"], cmd["task"], cmd["tuple"])
 
 def sendMsgToParent(msg):
-    print json_encode(msg)
+    msg_str = json_encode(msg)
+    print msg_str
     print "end"
     sys.stdout.flush()
+    logger.debug("sendMsgToParent %s", msg_str)
 
 def sync():
     sendMsgToParent({'command':'sync'})
@@ -177,7 +185,14 @@ class Tuple(object):
     def is_heartbeat_tuple(self):
         return self.task == -1 and self.stream == "__heartbeat"
 
-class Bolt(object):
+
+class Worker(object):
+    name = 'unknown'
+
+    def __init__(self):
+        Worker.name = self.__class__.__name__
+
+class Bolt(Worker):
     def initialize(self, stormconf, context):
         global MODE
         MODE = Bolt
@@ -198,9 +213,10 @@ class Bolt(object):
                 else:
                     self.process(tup)
         except Exception, e:
+            logger.exception('Bolt error')
             reportError(traceback.format_exc(e))
 
-class BasicBolt(object):
+class BasicBolt(Worker):
     def initialize(self, stormconf, context):
         global MODE
         MODE = Bolt
@@ -228,10 +244,11 @@ class BasicBolt(object):
                         reportError(traceback.format_exc(e))
                         fail(tup)
         except Exception, e:
+            logger.exception('BasicBolt error')
             reportError(traceback.format_exc(e))
 
 
-class Spout(object):
+class Spout(Worker):
     def initialize(self, conf, context):
         global MODE
         MODE = Spout
@@ -261,4 +278,15 @@ class Spout(object):
                     self.fail(msg["id"])
                 sync()
         except Exception, e:
+            logger.exception('spout error')
             reportError(traceback.format_exc(e))
+
+
+def init_logger(logger):
+    old_log = logger._log
+
+    def new_log(level, msg, args, **kwargs):
+        return old_log(level, "[%s] %s" % (Worker.name, msg), args, **kwargs)
+    logger._log = new_log
+
+init_logger(logger)

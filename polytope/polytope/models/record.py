@@ -245,7 +245,7 @@ class AddupData(object):
             aver[key] = round(self.sum[key] / count, 2)
             dis[key] = {}
             for r, c in self.dis[key].items():
-                dis[key][r] = round(c / count * 100,  2)
+                dis[key][r] = round(float(c) / count * 100,  2)
         result = {
             "aver": aver,
             "dis": dis,

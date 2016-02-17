@@ -13,9 +13,9 @@ STORE_ENGINE = {
 }
 
 SPOUT_ENGINE = {
-    'source': 'file',
+    'engine': 'file',
     'file': {
-        'path': 'test.log',
+        'path': '/Users/lianbo/tmpt/test.log',
     },
     'kafka': {
         'topic': 'sohuwl-seo',
@@ -24,3 +24,21 @@ SPOUT_ENGINE = {
         'offset_reset': 'latest',
     }
 }
+
+import logging
+import logging.handlers
+import os
+
+LOG_NAME = 'all.log'
+LOG_PATH = os.path.join(os.path.dirname(__file__), LOG_NAME)
+LOG_BACKUP_DAY_COUNT = 7
+LOG_FORMAT = '[%(asctime)s][%(name)s][%(process)d][%(levelname)s] %(message)s'
+LOG_LEVEL = 'INFO'
+
+
+logging.root.setLevel(LOG_LEVEL)
+hander = logging.handlers.TimedRotatingFileHandler(LOG_PATH, when='D', backupCount=LOG_BACKUP_DAY_COUNT)
+formatter = logging.Formatter(LOG_FORMAT)
+hander.setFormatter(formatter)
+hander.setLevel(LOG_LEVEL)
+logging.root.addHandler(hander)

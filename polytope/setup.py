@@ -11,6 +11,9 @@ setup(
     author_email="lianboshao@sohu-inc.com",
     packages=find_packages(),
     include_package_data=True,
+    package_data={
+        'polytope.spout_source.utils.ipip': ['*.datx'],
+    },
     install_requires=[
         'kazoo',
         'samsa'

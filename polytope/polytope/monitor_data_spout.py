@@ -39,7 +39,6 @@ class MonitorDataSpout(Spout):
             if end:
                 sys.exit(0)
             for t in generate_tuple(index, data):
-                print t
                 self.tuples.append(t)
             emit(self.tuples.pop())
             return

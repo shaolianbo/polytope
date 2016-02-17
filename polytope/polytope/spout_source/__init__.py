@@ -1,3 +1,3 @@
 # coding: utf-8
-from file import FileSpout
+from file_sys import FileSpout
 from kafka import KafkaSpout
